@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate-compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validar docker-compose
+        run: |
+          cp .env.example .env
+          sed -i 's/^WG_HOST=$/WG_HOST=127.0.0.1/' .env
+          sed -i 's/^JWT_SECRET=$/JWT_SECRET=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef/' .env
+          sed -i 's/^ADMIN_PASSWORD=$/ADMIN_PASSWORD=TestPassword123!/' .env
+          docker compose config --quiet
+
+      - name: Validar scripts shell
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+          find scripts -name '*.sh' -not -path '*/lib/*' -exec shellcheck -x {} +
+
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build frontend
+        working-directory: web/frontend
+        run: |
+          npm install
+          npm run build
+
+      - name: Verificar backend
+        working-directory: web/backend
+        run: |
+          npm install
+          node --check src/index.js

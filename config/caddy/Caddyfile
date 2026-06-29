@@ -1,0 +1,29 @@
+# Caddy — HTTPS para el portal VP´N
+
+{
+	email {$ACME_EMAIL}
+	admin off
+}
+
+{$PANEL_DOMAIN} {
+	header {
+		-Server
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+
+	reverse_proxy vpn-portal:{$WEB_PORT} {
+		health_uri /api/health
+		health_interval 30s
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}
+
+http://{$PANEL_DOMAIN} {
+	redir https://{host}{uri} permanent
+}

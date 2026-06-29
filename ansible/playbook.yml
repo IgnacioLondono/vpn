@@ -1,0 +1,95 @@
+---
+# Playbook Ansible — despliegue automatizado VP´N
+# Uso: ansible-playbook -i inventory.ini ansible/playbook.yml
+
+- name: Desplegar VP´N WireGuard VPN
+  hosts: vpn_servers
+  become: true
+  vars:
+    vpn_install_dir: /opt/vpn
+    vpn_repo_local: "{{ playbook_dir }}/.."
+
+  pre_tasks:
+    - name: Verificar SO compatible
+      assert:
+        that: ansible_os_family == "Debian"
+        fail_msg: "Solo soportado en Debian/Ubuntu"
+
+  tasks:
+    - name: Instalar dependencias del sistema
+      apt:
+        name:
+          - curl
+          - wireguard
+          - wireguard-tools
+          - iptables
+          - ufw
+          - dnsutils
+          - make
+        state: present
+        update_cache: true
+
+    - name: Instalar Docker
+      shell: curl -fsSL https://get.docker.com | sh
+      args:
+        creates: /usr/bin/docker
+
+    - name: Crear directorio de instalación
+      file:
+        path: "{{ vpn_install_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Sincronizar archivos del proyecto
+      synchronize:
+        src: "{{ vpn_repo_local }}/"
+        dest: "{{ vpn_install_dir }}/"
+        delete: false
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=data"
+          - "--exclude=backups"
+          - "--exclude=.env"
+
+    - name: Copiar .env si no existe
+      copy:
+        src: "{{ vpn_repo_local }}/.env"
+        dest: "{{ vpn_install_dir }}/.env"
+        mode: "0600"
+        force: false
+      ignore_errors: true
+
+    - name: Crear .env desde plantilla
+      copy:
+        src: "{{ vpn_install_dir }}/.env.example"
+        dest: "{{ vpn_install_dir }}/.env"
+        mode: "0600"
+        force: false
+
+    - name: Configurar WG_HOST
+      lineinfile:
+        path: "{{ vpn_install_dir }}/.env"
+        regexp: "^WG_HOST="
+        line: "WG_HOST={{ vpn_public_ip | default(ansible_default_ipv4.address) }}"
+
+    - name: Habilitar IP forwarding
+      copy:
+        dest: /etc/sysctl.d/99-vpn.conf
+        content: |
+          net.ipv4.ip_forward=1
+          net.ipv4.conf.all.src_valid_mark=1
+          net.ipv6.conf.all.forwarding=1
+      notify: aplicar sysctl
+
+    - name: Ejecutar instalación
+      command: "{{ vpn_install_dir }}/scripts/install-server.sh --skip-docker"
+      environment:
+        PATH: "/usr/local/bin:/usr/bin:/bin"
+
+    - name: Configurar firewall UFW
+      command: "{{ vpn_install_dir }}/scripts/setup-firewall.sh"
+      when: vpn_configure_firewall | default(true)
+
+  handlers:
+    - name: aplicar sysctl
+      command: sysctl --system

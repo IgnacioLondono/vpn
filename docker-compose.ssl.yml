@@ -1,0 +1,5 @@
+# SSL — portal solo vía Caddy (443), no expone puerto web directo
+services:
+  vpn-portal:
+    ports:
+      - "${WG_PORT:-51820}:${WG_PORT:-51820}/udp"

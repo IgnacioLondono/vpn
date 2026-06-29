@@ -1,0 +1,6 @@
+[vpn_servers]
+# vpn1 ansible_host=203.0.113.45 ansible_user=root
+
+[vpn_servers:vars]
+# vpn_public_ip=203.0.113.45
+# vpn_configure_firewall=true

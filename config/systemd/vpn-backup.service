@@ -1,0 +1,14 @@
+[Unit]
+Description=VP´N VPN Backup
+Documentation=https://github.com
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/vpn
+ExecStart=/opt/vpn/scripts/backup.sh
+User=root
+
+[Install]
+WantedBy=multi-user.target

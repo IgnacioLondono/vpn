@@ -1,0 +1,107 @@
+# VP´N — Stack con portal web propio
+# Uso: docker compose up -d
+# HTTPS: docker compose --profile ssl up -d  (requiere PANEL_DOMAIN y ACME_EMAIL en .env)
+
+name: ${COMPOSE_PROJECT_NAME:-vpn}
+
+services:
+  vpn-portal:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    image: vpn-portal:latest
+    container_name: vpn-portal
+    hostname: vpn-portal
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      WEB_PORT: ${WEB_PORT:-8443}
+      WG_HOST: ${WG_HOST:?WG_HOST es obligatorio — configura tu IP en .env}
+      WG_PORT: ${WG_PORT:-443}
+      WG_SUBNET: ${WG_SUBNET:-10.8.0}
+      WG_CONFIG_DIR: /etc/wireguard
+      DB_PATH: /data/vpn.db
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET es obligatorio — openssl rand -hex 32}
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD es obligatorio}
+      WG_DEFAULT_DNS: ${WG_DEFAULT_DNS:-1.1.1.1, 8.8.8.8}
+      WG_PERSISTENT_KEEPALIVE: ${WG_PERSISTENT_KEEPALIVE:-15}
+      WG_MTU: ${WG_MTU:-1280}
+      VPN_MODE: ${VPN_MODE:-gaming}
+      TZ: ${TZ:-Europe/Madrid}
+    volumes:
+      - ./data/wireguard:/etc/wireguard
+      - ./data/portal:/data
+    ports:
+      - "${WG_PORT:-443}:${WG_PORT:-443}/udp"
+      - "${WEB_PORT:-8443}:${WEB_PORT:-8443}/tcp"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      net.ipv4.ip_forward: 1
+      net.ipv4.conf.all.src_valid_mark: 1
+    networks:
+      - vpn-internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:$${WEB_PORT}/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    labels:
+      - "com.vpn.service=portal"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: vpn-caddy
+    profiles: ["ssl"]
+    restart: unless-stopped
+    depends_on:
+      vpn-portal:
+        condition: service_healthy
+    environment:
+      PANEL_DOMAIN: ${PANEL_DOMAIN:-}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+      WEB_PORT: ${WEB_PORT:-8443}
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    ports:
+      - "80:80/tcp"
+      - "443:443/tcp"
+    networks:
+      - vpn-internal
+    labels:
+      - "com.vpn.service=caddy"
+
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    container_name: vpn-watchtower
+    profiles: ["watchtower"]
+    restart: unless-stopped
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_SCHEDULE: "${WATCHTOWER_SCHEDULE:-0 0 4 * * *}"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      TZ: ${TZ:-UTC}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - vpn-internal
+
+networks:
+  vpn-internal:
+    driver: bridge
+
+volumes:
+  caddy-data:
+  caddy-config:

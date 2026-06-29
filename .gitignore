@@ -1,0 +1,11 @@
+.env
+data/
+backups/
+clients/
+*.conf
+!client/wireguard-client-template.conf
+!server/wg0.conf.template
+node_modules/
+web/backend/public/assets/
+web/backend/public/index.html
+*.tar.gz

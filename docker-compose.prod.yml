@@ -1,0 +1,10 @@
+# Producción — límites de recursos
+services:
+  vpn-portal:
+    deploy:
+      resources:
+        limits:
+          cpus: "${WG_CPU_LIMIT:-1.0}"
+          memory: "${WG_MEMORY_LIMIT:-512M}"
+        reservations:
+          memory: 128M

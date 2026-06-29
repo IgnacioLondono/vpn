@@ -1,0 +1,12 @@
+[Unit]
+Description=VP´N VPN Healthcheck
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/vpn
+ExecStart=/opt/vpn/scripts/healthcheck.sh
+User=root
+
+[Install]
+WantedBy=multi-user.target
