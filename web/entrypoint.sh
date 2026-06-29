@@ -45,5 +45,5 @@ if [ -f /etc/wireguard/wg0.conf ]; then
   wg-quick up wg0 2>/dev/null || echo "[entrypoint] WireGuard se iniciará vía API"
 fi
 
-echo "[entrypoint] WG_HOST=$WG_HOST | WEB_PORT=${WEB_PORT:-8443} | VPN UDP ${WG_PORT:-443}"
+echo "[entrypoint] WG_HOST=$WG_HOST | WEB_PORT=${WEB_PORT:-51822} | VPN UDP ${WG_PORT:-443}"
 exec node src/index.js

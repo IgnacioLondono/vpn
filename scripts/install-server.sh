@@ -55,5 +55,5 @@ start_stack
 
 load_env "$ROOT" 2>/dev/null || true
 echo ""
-log "Portal listo: http://${WG_HOST:-localhost}:${WEB_PORT:-8443}"
+log "Portal listo: http://${WG_HOST:-localhost}:${WEB_PORT:-51822}"
 log "Usuario: ${ADMIN_USER:-admin}"

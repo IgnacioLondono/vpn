@@ -28,7 +28,7 @@ done
 command -v ufw &>/dev/null || die "UFW no instalado: apt install ufw"
 
 WG_PORT="${WG_PORT:-51820}"
-WEB_PORT="${WEB_PORT:-8443}"
+WEB_PORT="${WEB_PORT:-51822}"
 
 banner
 log "Configurando UFW..."

@@ -21,13 +21,13 @@ WG_PORT=443
 ```
 
 - **443/UDP** — tráfico WireGuard (VPN). Suele pasar mejor routers y firewalls.
-- El panel web usa **8443/TCP** (o **443/TCP** con HTTPS vía Caddy).
+- El panel web usa **51822/TCP** (o **443/TCP** con HTTPS vía Caddy).
 
 En el firewall de tu nube:
 
 ```bash
 sudo ufw allow 443/udp comment 'VP´N WireGuard'
-sudo ufw allow 8443/tcp comment 'Panel VP´N'
+sudo ufw allow 51822/tcp comment 'Panel VP´N'
 ```
 
 ---

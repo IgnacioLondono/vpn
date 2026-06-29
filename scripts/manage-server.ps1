@@ -36,6 +36,6 @@ try {
         "restart" { docker compose restart; docker compose ps }
         "status"  { docker compose ps -a }
         "logs"    { docker compose logs -f --tail=100 vpn-portal }
-        "health"  { Invoke-RestMethod "http://localhost:8443/api/health" }
+        "health"  { Invoke-RestMethod "http://localhost:51822/api/health" }
     }
 } finally { Pop-Location }

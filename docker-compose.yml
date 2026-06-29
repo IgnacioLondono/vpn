@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      WEB_PORT: ${WEB_PORT:-8443}
+      WEB_PORT: ${WEB_PORT:-51822}
       WG_HOST: ${WG_HOST:-}
       WG_PORT: ${WG_PORT:-443}
       WG_SUBNET: ${WG_SUBNET:-10.8.0}
@@ -34,7 +34,7 @@ services:
       - ./data/portal:/data
     ports:
       - "${WG_PORT:-443}:${WG_PORT:-443}/udp"
-      - "${WEB_PORT:-8443}:${WEB_PORT:-8443}/tcp"
+      - "${WEB_PORT:-51822}:${WEB_PORT:-51822}/tcp"
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -69,7 +69,7 @@ services:
     environment:
       PANEL_DOMAIN: ${PANEL_DOMAIN:-}
       ACME_EMAIL: ${ACME_EMAIL:-}
-      WEB_PORT: ${WEB_PORT:-8443}
+      WEB_PORT: ${WEB_PORT:-51822}
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data

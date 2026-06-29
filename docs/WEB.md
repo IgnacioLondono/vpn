@@ -7,7 +7,7 @@
 - Ubuntu 22.04+ / Debian 11+
 - Docker + Docker Compose
 - IP pública
-- Puertos: **UDP 443** (VPN), **TCP 8443** (portal) o **443** (panel con HTTPS)
+- Puertos: **UDP 443** (VPN), **TCP 51822** (portal) o **443** (panel con HTTPS)
 
 ### Paso 1 — Configurar
 
@@ -22,7 +22,7 @@ WG_HOST=203.0.113.45          # Tu IP pública
 ADMIN_USER=admin
 ADMIN_PASSWORD=TuClaveSegura123!
 JWT_SECRET=abc123...            # openssl rand -hex 32
-WEB_PORT=8443
+WEB_PORT=51822
 ```
 
 ### Paso 2 — Instalar
@@ -35,7 +35,7 @@ make start
 
 ### Paso 3 — Usar el panel
 
-1. Abre `http://WG_HOST:8443`
+1. Abre `http://WG_HOST:51822`
 2. Inicia sesión con `ADMIN_USER` / `ADMIN_PASSWORD`
 3. Pulsa **Registrar este PC**
 4. Pulsa **Encender VPN en este PC**

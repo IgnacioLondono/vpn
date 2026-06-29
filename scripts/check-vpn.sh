@@ -10,7 +10,7 @@ load_env "$ROOT" 2>/dev/null || true
 
 SERVER_IP="${WG_HOST:-}"
 WG_PORT="${WG_PORT:-51820}"
-WEB_PORT="${WEB_PORT:-8443}"
+WEB_PORT="${WEB_PORT:-51822}"
 
 banner
 info "Diagnóstico del stack VP´N"

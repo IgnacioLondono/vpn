@@ -44,14 +44,14 @@ chmod +x install.sh scripts/*.sh
 sudo ./install.sh
 ```
 
-Abre `http://TU_IP:8443` → inicia sesión → **Registrar este PC** → **Encender VPN en este PC**.
+Abre `http://TU_IP:51822` → inicia sesión → **Registrar este PC** → **Encender VPN en este PC**.
 
 ## Configuración (.env)
 
 | Variable | Descripción |
 |---|---|
 | `WG_HOST` | IP o dominio público del servidor |
-| `WEB_PORT` | Puerto del portal (**8443** TCP) |
+| `WEB_PORT` | Puerto del portal (**51822** TCP) |
 | `ADMIN_USER` | Usuario del panel |
 | `ADMIN_PASSWORD` | Contraseña (mín. 8 caracteres) |
 | `JWT_SECRET` | Secreto JWT (`openssl rand -hex 32`) |
@@ -63,13 +63,13 @@ Tras registrar el PC en el panel, copia el **Agent Token** y ejecuta en PowerShe
 
 ```powershell
 cd scripts
-.\vpn-agent.ps1 -ServerUrl "http://TU_IP:8443" -AgentToken "tu-token-aqui"
+.\vpn-agent.ps1 -ServerUrl "http://TU_IP:51822" -AgentToken "tu-token-aqui"
 ```
 
 Para iniciar automáticamente al encender Windows:
 
 ```powershell
-.\vpn-agent.ps1 -Install -ServerUrl "http://TU_IP:8443" -AgentToken "tu-token"
+.\vpn-agent.ps1 -Install -ServerUrl "http://TU_IP:51822" -AgentToken "tu-token"
 ```
 
 ## HTTPS con dominio propio
@@ -108,7 +108,7 @@ make health        # Healthcheck
 
 - Cambia `ADMIN_PASSWORD` y `JWT_SECRET` antes de desplegar.
 - Usa HTTPS en producción (`--profile ssl`).
-- Restringe el puerto **8443/TCP** con firewall a tus IPs si no usas HTTPS.
+- Restringe el puerto **51822/TCP** con firewall a tus IPs si no usas HTTPS.
 - No compartas el Agent Token ni archivos `.conf`.
 
 Documentación detallada: [docs/WEB.md](docs/WEB.md)

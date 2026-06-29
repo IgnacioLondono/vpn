@@ -12,7 +12,7 @@ import deviceRoutes from './routes/devices.js';
 import agentRoutes from './routes/agent.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PORT = process.env.WEB_PORT || 8443;
+const PORT = process.env.WEB_PORT || 51822;
 const app = express();
 
 app.use(helmet({ contentSecurityPolicy: false }));

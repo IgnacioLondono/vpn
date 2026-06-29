@@ -41,7 +41,7 @@ check_port() {
 check_container "vpn-portal"
 check_container "vpn-caddy"
 check_port "${WG_PORT:-51820}" "udp"
-check_port "${WEB_PORT:-8443}" "tcp"
+check_port "${WEB_PORT:-51822}" "tcp"
 
 if [[ -r /proc/sys/net/ipv4/ip_forward ]]; then
     [[ "$(cat /proc/sys/net/ipv4/ip_forward)" == "1" ]] \

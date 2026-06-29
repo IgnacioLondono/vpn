@@ -26,7 +26,7 @@ Opcionales (tienen default):
 
 | Variable | Default |
 |---|---|
-| `WEB_PORT` | `8443` |
+| `WEB_PORT` | `51822` |
 | `WG_PORT` | `443` |
 | `VPN_MODE` | `gaming` |
 | `ADMIN_USER` | `admin` |
@@ -61,10 +61,10 @@ docker compose up -d --build
 
 ```bash
 sudo ufw allow 443/udp    # VPN WireGuard
-sudo ufw allow 8443/tcp   # Panel web
+sudo ufw allow 51822/tcp   # Panel web
 ```
 
-Panel: `http://TU_IP:8443`
+Panel: `http://TU_IP:51822`
 
 ---
 
