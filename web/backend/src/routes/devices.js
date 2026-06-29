@@ -82,7 +82,11 @@ router.post('/:id/deactivate', (req, res) => {
   });
 });
 
-router.get('/:id/config', (req, res) => {
+router.get('/:id/config', (req, res, next) => {
+  if (req.query.token) {
+    req.headers.authorization = `Bearer ${req.query.token}`;
+  }
+  authMiddleware(req, res, () => {
   const db = getDb();
   const device = db.prepare('SELECT * FROM devices WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
   if (!device) return res.status(404).json({ error: 'Dispositivo no encontrado' });
@@ -92,6 +96,7 @@ router.get('/:id/config', (req, res) => {
 
   res.setHeader('Content-Disposition', `attachment; filename="${device.name}.conf"`);
   res.type('text/plain').send(config);
+  });
 });
 
 router.delete('/:id', (req, res) => {

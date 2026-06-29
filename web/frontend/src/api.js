@@ -1,9 +1,15 @@
 const API = '/api';
+const TOKEN_KEY = 'vpn_token';
+
+function authHeaders() {
+  const token = sessionStorage.getItem(TOKEN_KEY);
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 async function request(path, options = {}) {
   const res = await fetch(`${API}${path}`, {
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: { 'Content-Type': 'application/json', ...authHeaders(), ...options.headers },
     ...options,
   });
   const data = await res.json().catch(() => ({}));
@@ -12,9 +18,22 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-  login: (username, password) =>
-    request('/auth/login', { method: 'POST', body: JSON.stringify({ username, password }) }),
-  logout: () => request('/auth/logout', { method: 'POST' }),
+  login: async (username, password) => {
+    const data = await request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    });
+    sessionStorage.setItem(TOKEN_KEY, data.token);
+    return data;
+  },
+  logout: async () => {
+    sessionStorage.removeItem(TOKEN_KEY);
+    try {
+      await request('/auth/logout', { method: 'POST' });
+    } catch {
+      /* ok */
+    }
+  },
   me: () => request('/auth/me'),
   getDevices: () => request('/devices'),
   registerDevice: (name) =>
@@ -25,6 +44,10 @@ export const api = {
   getStatus: () => request('/status'),
 };
 
-export function downloadConfig(id, name) {
-  window.open(`${API}/devices/${id}/config`, '_blank');
+export function downloadConfig(id) {
+  const token = sessionStorage.getItem(TOKEN_KEY);
+  const url = token
+    ? `${API}/devices/${id}/config?token=${encodeURIComponent(token)}`
+    : `${API}/devices/${id}/config`;
+  window.open(url, '_blank');
 }

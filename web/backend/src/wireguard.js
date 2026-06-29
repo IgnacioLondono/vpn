@@ -10,6 +10,7 @@ const WG_PORT = process.env.WG_PORT || '51820';
 const WG_HOST = process.env.WG_HOST || '127.0.0.1';
 const SUBNET = process.env.WG_SUBNET || '10.8.0';
 const SERVER_PRIVATE_KEY_FILE = path.join(WG_DIR, 'server_private.key');
+const ACTIVE_PEER_FILE = path.join(WG_DIR, 'active_peer');
 const WG_MTU = process.env.WG_MTU || '1280';
 const VPN_MODE = process.env.VPN_MODE || 'gaming';
 
