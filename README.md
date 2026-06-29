@@ -15,7 +15,7 @@ Portal web propio para controlar tu VPN WireGuard en tu nube Linux. **Gratis** (
 | `WG_MTU` | `1280` | Menos pérdida de paquetes |
 | `WG_PERSISTENT_KEEPALIVE` | `15` | Túnel estable tras NAT |
 
-Detalle completo: [docs/GAMING.md](docs/GAMING.md)
+Detalle completo: [docs/GAMING.md](docs/GAMING.md) · Portainer: [docs/PORTAINER.md](docs/PORTAINER.md)
 
 ## Cómo funciona
 
