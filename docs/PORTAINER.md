@@ -10,6 +10,20 @@ Significa que **no configuraste las variables de entorno** antes de desplegar.
 
 ---
 
+## Error: puerto 8443 already in use
+
+Portainer guarda variables antiguas. **Elimina** `WEB_PORT=8443` de Environment variables
+(o cámbiala a `51822`). El compose ya usa **51822 fijo** — no hace falta definir `WEB_PORT`.
+
+Si sigue fallando, borra contenedores viejos:
+
+```bash
+docker rm -f vpn-portal 2>/dev/null
+docker compose down
+```
+
+---
+
 ## Paso 1 — Variables obligatorias
 
 En Portainer: **Stacks** → tu stack → **Editor** → sección **Environment variables**
@@ -24,12 +38,12 @@ Añade estas (cambia los valores):
 
 Opcionales (tienen default):
 
-| Variable | Default |
-|---|---|
-| `WEB_PORT` | `51822` |
-| `WG_PORT` | `443` |
-| `VPN_MODE` | `gaming` |
-| `ADMIN_USER` | `admin` |
+| Variable | Default | Notas |
+|---|---|---|
+| `WG_PORT` | `443` | VPN UDP |
+| `VPN_MODE` | `gaming` | |
+| `ADMIN_USER` | `admin` | |
+| Panel web | **51822/TCP** | Fijado en compose — no uses `WEB_PORT=8443` |
 
 Plantilla lista para copiar: [portainer.env.example](../portainer.env.example)
 

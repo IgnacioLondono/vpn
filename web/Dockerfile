@@ -18,7 +18,7 @@ COPY scripts/vpn-agent.ps1 ./agent/vpn-agent.ps1
 RUN chmod +x /entrypoint.sh
 
 ENV NODE_ENV=production
-EXPOSE 8443
+EXPOSE 51822
 EXPOSE 51820/udp
 
 VOLUME ["/etc/wireguard", "/data"]
